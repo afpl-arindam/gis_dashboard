@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>GIS Dashboard</title>
+
+  <!-- Leaflet -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <!-- Leaflet Draw -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"
+  />
+
+  <!-- CSS -->
+  <link
+    rel="stylesheet"
+    href="css/style.css"
+  />
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <header class="navbar">
+
+        <!-- Logo Image -->
+        <div class="nav-left">
+            <img src="assets/logo.png" alt="Logo" class="nav-logo">
+        </div>
+
+        <!-- Title -->
+        <div class="nav-center">
+            GIS Analytics Dashboard
+        </div>
+
+        <!-- Actions -->
+        <div class="nav-actions">
+
+            <button id="locateBtn">
+              📍 Current Location
+            </button>
+
+            <label class="theme-switch">
+
+                <input type="checkbox" id="themeToggle">
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+    </header>
+
+  <!-- Main Layout -->
+  <main class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      
+      <!-- GeoJSON Upload -->
+      <div class="panel">
+
+        <h2>GeoJSON Upload</h2>
+
+        <input
+          type="file"
+          id="geojsonInput"
+          accept=".geojson,.json"
+        />
+
+        <div id="layerList" class="layer-list"></div>
+        
+
+      </div>
+        <!-- <div class="panel">
+        
+            <h2>Shapefile Upload</h2>
+
+            <input type="file" id="shp_shp" accept=".shp">
+            <label>.SHP (Geometry)</label>
+
+            <input type="file" id="shp_shx" accept=".shx">
+            <label>.SHX (Index)</label>
+
+            <input type="file" id="shp_dbf" accept=".dbf">
+            <label>.DBF (Attributes)</label>
+
+            <input type="file" id="shp_prj" accept=".prj">
+            <label>.PRJ (Projection)</label>
+
+            <button id="loadShpBtn">Load Shapefile</button>
+
+        </div> -->
+
+      <!-- Buffer -->
+        <div class="panel">
+
+            <h2>Buffer Analysis</h2>
+
+            <label>Radius (km)</label>
+
+            <input
+            type="range"
+            id="bufferRadius"
+            min="1"
+            max="50"
+            value="25"
+            />
+
+            <div class="buffer-info">
+                Radius: <span id="radiusValue">25</span> km
+            </div>
+
+            <button id="createBuffer">
+            Create Buffer
+            </button>
+        </div>
+
+        <div class="panel">
+
+        <h2>Analytics</h2>
+
+        <div class="analytics-grid">
+
+          <div class="card">
+            <span>Zoom Level</span>
+            <strong id="zoomLevel">--</strong>
+          </div>
+
+          <div class="card">
+            <span>Coordinates</span>
+            <strong id="coordinates">--</strong>
+          </div>
+
+          <div class="card">
+            <span>Geometry Count</span>
+            <strong id="geometryCount">0</strong>
+          </div>
+
+          <div class="card">
+            <span>Total Distance</span>
+            <strong id="distanceValue">0 km</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+    </aside>
+
+
+    <!-- Map -->
+    <section id="map"></section>
+
+  </main>
+
+  <!-- Attribute Table Modal -->
+
+  <div id="attributeModal" class="attribute-modal">
+
+    <div class="attribute-container">
+
+      <div class="attribute-header">
+
+        <h2>Attribute Table</h2>
+
+        <button id="closeAttribute">
+          ✕
+        </button>
+
+      </div>
+
+      <input
+        type="text"
+        id="attributeSearch"
+        placeholder="Search attributes..."
+      />
+
+      <div class="attribute-table-wrapper">
+
+        <table id="attributeTable">
+
+          <thead></thead>
+
+          <tbody></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Leaflet -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Leaflet Draw -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+
+  <!-- Turf.js -->
+  <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+
+  <script src="https://unpkg.com/shpjs@latest/dist/shp.min.js"></script>
+
+  <!-- JS Modules -->
+  <script src="js/config.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/layers.js"></script>
+  <script src="js/drawing.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/geojson.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+
+</html>

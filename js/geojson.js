@@ -71,13 +71,9 @@ document.getElementById(
 
       // STORE LAYER
       const layerData = {
-
         id: Date.now(),
-
-        name: file.name,
-
+        name: file.name.replace(/\.[^/.]+$/, ""),
         layer
-
       };
 
       geojsonLayers.push(layerData);
@@ -667,13 +663,9 @@ function addGISLayerFromGeoJSON(
   ).addTo(map);
 
   const layerData = {
-
     id: Date.now(),
-
-    name: layerName,
-
+    name: layerName.replace(/\.[^/.]+$/, ""),
     layer
-
   };
 
   geojsonLayers.push(layerData);

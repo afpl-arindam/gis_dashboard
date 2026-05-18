@@ -146,7 +146,7 @@ document.getElementById("exportMapBtn").addEventListener("click", async () => {
 
     logo.onload = () => {
 
-      setTimeout(resolve, 500);
+      setTimeout(resolve, 1500);
 
     };
 

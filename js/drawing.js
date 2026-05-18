@@ -83,7 +83,7 @@ map.on(L.Draw.Event.DELETED, function () {
 function analyzeGeometry(layer) {
 
   // Circle
-  if(layer instanceof L.Circle) {
+  if (layer instanceof L.Circle) {
 
     const radius =
       (layer.getRadius() / 1000).toFixed(2);
@@ -101,15 +101,15 @@ function analyzeGeometry(layer) {
   }
 
   // Polyline
-  else if(layer instanceof L.Polyline &&
-          !(layer instanceof L.Polygon)) {
+  else if (layer instanceof L.Polyline &&
+    !(layer instanceof L.Polygon)) {
 
     const latlngs =
       layer.getLatLngs();
 
     let totalDistance = 0;
 
-    for(let i = 0; i < latlngs.length - 1; i++) {
+    for (let i = 0; i < latlngs.length - 1; i++) {
 
       totalDistance +=
         latlngs[i].distanceTo(latlngs[i + 1]);
@@ -124,7 +124,7 @@ function analyzeGeometry(layer) {
   }
 
   // Polygon
-  else if(layer instanceof L.Polygon) {
+  else if (layer instanceof L.Polygon) {
 
     const geojson =
       layer.toGeoJSON();
@@ -145,7 +145,7 @@ document.getElementById(
   "locateBtn"
 ).addEventListener("click", () => {
 
-  if(!navigator.geolocation) {
+  if (!navigator.geolocation) {
 
     alert("Geolocation not supported");
 
@@ -162,7 +162,7 @@ document.getElementById(
       const lng =
         position.coords.longitude;
 
-      if(currentLocationMarker) {
+      if (currentLocationMarker) {
 
         map.removeLayer(currentLocationMarker);
 
@@ -256,7 +256,7 @@ radiusSlider.addEventListener(
       radiusSlider.value;
 
     // LIVE UPDATE BUFFER
-    if(bufferLayer) {
+    if (bufferLayer) {
 
       bufferLayer.setRadius(
         radiusSlider.value * 1000
@@ -288,7 +288,7 @@ createBufferBtn.addEventListener(
 // MAP CLICK → CREATE BUFFER
 map.on("click", (e) => {
 
-  if(!bufferMode) return;
+  if (!bufferMode) return;
 
   bufferMode = false;
 

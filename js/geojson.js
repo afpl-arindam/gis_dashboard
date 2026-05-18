@@ -14,12 +14,12 @@ document.getElementById(
   const file =
     event.target.files[0];
 
-  if(!file) return;
+  if (!file) return;
 
   const reader =
     new FileReader();
 
-  reader.onload = function(e) {
+  reader.onload = function (e) {
 
     try {
 
@@ -42,29 +42,29 @@ document.getElementById(
           },
 
           onEachFeature:
-            function(feature, featureLayer) {
+            function (feature, featureLayer) {
 
-            if(feature.properties) {
+              if (feature.properties) {
 
-              let popupContent = "";
+                let popupContent = "";
 
-              for(const key in feature.properties) {
+                for (const key in feature.properties) {
 
-                popupContent += `
+                  popupContent += `
                   <b>${key}</b>:
                   ${feature.properties[key]}
                   <br>
                 `;
 
+                }
+
+                featureLayer.bindPopup(
+                  popupContent
+                );
+
               }
 
-              featureLayer.bindPopup(
-                popupContent
-              );
-
             }
-
-          }
 
         }
       ).addTo(map);
@@ -86,16 +86,21 @@ document.getElementById(
       createLayerItem(layerData);
 
       // FIT MAP
-      map.fitBounds(
-        layer.getBounds()
-      );
+      if (layer.getBounds().isValid()) {
+
+        map.fitBounds(
+          layer.getBounds()
+        );
+
+      }
 
       alert(
         "GeoJSON Loaded Successfully"
       );
+      event.target.value = "";
 
     }
-    catch(error) {
+    catch (error) {
 
       console.error(error);
 
@@ -116,40 +121,26 @@ function createLayerItem(layerData) {
   const item =
     document.createElement("div");
 
-  item.className = "layer-item";
+  item.className = "layer-card";
 
   item.innerHTML = `
-
-    <div class="layer-top">
-
-      <input
-        type="checkbox"
-        checked
-      />
-
-      <div class="layer-name">
-        ${layerData.name}
-      </div>
-
+  <div class="layer-header">
+    <div class="layer-name" title="${layerData.name}">
+      ${layerData.name}
     </div>
 
-    <div class="layer-actions">
+    <label class="toggle">
+      <input type="checkbox" checked />
+      <span></span>
+    </label>
+  </div>
 
-        <button class="table-btn">
-            Table
-        </button>
-
-        <button class="zoom-btn">
-            Zoom
-        </button>
-
-        <button class="remove-btn">
-            Remove
-        </button>
-
-    </div>
-
-  `;
+  <div class="layer-footer">
+    <button class="table-btn">Table</button>
+    <button class="zoom-btn">Zoom</button>
+    <button class="remove-btn">Remove</button>
+  </div>
+`;
 
   // TOGGLE VISIBILITY
   const checkbox =
@@ -159,7 +150,7 @@ function createLayerItem(layerData) {
     "change",
     () => {
 
-      if(checkbox.checked) {
+      if (checkbox.checked) {
 
         map.addLayer(
           layerData.layer
@@ -177,35 +168,42 @@ function createLayerItem(layerData) {
     }
   );
 
-    // ATTRIBUTE TABLE
-    item.querySelector(".table-btn")
+  // ATTRIBUTE TABLE
+  item.querySelector(".table-btn")
     .addEventListener("click", () => {
 
-    openAttributeTable(layerData);
+      openAttributeTable(layerData);
 
     });
 
   // ZOOM TO LAYER
   item.querySelector(".zoom-btn")
-  .addEventListener("click", () => {
+    .addEventListener("click", () => {
 
-    map.fitBounds(
-      layerData.layer.getBounds()
-    );
+      map.fitBounds(
+        layerData.layer.getBounds()
+      );
 
-  });
+    });
 
   // REMOVE LAYER
   item.querySelector(".remove-btn")
-  .addEventListener("click", () => {
+    .addEventListener("click", () => {
+      if (map.hasLayer(layerData.layer)) {
+        map.removeLayer(layerData.layer);
+      }
 
-    map.removeLayer(
-      layerData.layer
-    );
+      const index = geojsonLayers.findIndex(
+        l => l.id === layerData.id
+      );
 
-    item.remove();
+      if (index !== -1) {
+        geojsonLayers.splice(index, 1);
+      }
 
-  });
+      item.remove();
+
+    });
 
   layerList.appendChild(item);
 
@@ -275,7 +273,7 @@ function openAttributeTable(layerData) {
 
   layerData.layer.eachLayer(layer => {
 
-    if(layer.feature) {
+    if (layer.feature) {
 
       features.push(layer.feature);
 
@@ -283,7 +281,7 @@ function openAttributeTable(layerData) {
 
   });
 
-  if(features.length === 0) return;
+  if (features.length === 0) return;
 
   const columns =
     Object.keys(
@@ -317,7 +315,7 @@ function openAttributeTable(layerData) {
 
     const term =
       attributeSearch.value
-      .toLowerCase();
+        .toLowerCase();
 
     const filtered =
       features.filter(feature => {
@@ -325,8 +323,8 @@ function openAttributeTable(layerData) {
         return JSON.stringify(
           feature.properties
         )
-        .toLowerCase()
-        .includes(term);
+          .toLowerCase()
+          .includes(term);
 
       });
 
@@ -363,7 +361,7 @@ function renderTableRows(
 
       tbody += `
         <td>
-          ${feature.properties[col] || ""}
+          ${feature.properties[col] ?? ""}
         </td>
       `;
 
@@ -395,9 +393,9 @@ function renderTableRows(
 
         layerData.layer.eachLayer(layer => {
 
-          if(layer.feature) {
+          if (layer.feature) {
 
-            if(current === index) {
+            if (current === index) {
 
               targetLayer = layer;
 
@@ -409,25 +407,29 @@ function renderTableRows(
 
         });
 
-        if(targetLayer) {
+        if (targetLayer) {
 
-          if(targetLayer.getBounds) {
+          attributeModal.classList.remove("active");
+          setTimeout(() => {
 
-            map.fitBounds(
-              targetLayer.getBounds()
-            );
+            if (targetLayer.getBounds) {
 
-          }
-          else if(targetLayer.getLatLng) {
+              map.fitBounds(
+                targetLayer.getBounds()
+              );
 
-            map.flyTo(
-              targetLayer.getLatLng(),
-              16
-            );
+            }
+            else if (targetLayer.getLatLng) {
 
-          }
+              map.flyTo(
+                targetLayer.getLatLng(),
+                16
+              );
 
-          targetLayer.openPopup();
+            }
+
+            targetLayer.openPopup();
+          }, 200);
 
         }
 
@@ -439,7 +441,6 @@ function renderTableRows(
 }
 
 
-
 // SHAPEFILE 4-FILE LOADER
 const shpInput = {
   shp: document.getElementById("shp_shp"),
@@ -449,48 +450,238 @@ const shpInput = {
 };
 
 document.getElementById("loadShpBtn")
-.addEventListener("click", async () => {
+  .addEventListener("click", async () => {
 
-  try {
+    try {
 
-    if(
-      !shpInput.shp.files[0] ||
-      !shpInput.shx.files[0] ||
-      !shpInput.dbf.files[0]
-    ){
-      alert("Please select .shp .shx .dbf files");
-      return;
+      if (
+        !shpInput.shp.files[0] ||
+        !shpInput.dbf.files[0]
+      ) {
+
+        alert("Please select .shp and .dbf files");
+        return;
+
+      }
+
+      // FILE BUFFERS
+      const shpBuffer =
+        await shpInput.shp.files[0].arrayBuffer();
+
+      const dbfBuffer =
+        await shpInput.dbf.files[0].arrayBuffer();
+
+      // PARSE SHAPEFILE
+      const geojson = await shp.combine([
+        await shp.parseShp(shpBuffer),
+        await shp.parseDbf(dbfBuffer)
+      ]);
+
+      // ADD TO MAP
+      addGISLayerFromGeoJSON(
+        geojson,
+        shpInput.shp.files[0].name
+      );
+
+      alert("Shapefile Loaded Successfully");
+
+      Object.values(shpInput).forEach(input => {
+        input.value = "";
+
+        const card =
+          input.closest(".shape-card");
+
+        card.classList.remove(
+          "selected"
+        );
+
+      });
+
+      document.getElementById("name_shp").textContent = "No file selected";
+      document.getElementById("name_shx").textContent = "No file selected";
+      document.getElementById("name_dbf").textContent = "No file selected";
+      document.getElementById("name_prj").textContent = "No file selected";
+
     }
 
-    // Convert files → arrayBuffers
-    const shpBuffer = await shpInput.shp.files[0].arrayBuffer();
-    const shxBuffer = await shpInput.shx.files[0].arrayBuffer();
-    const dbfBuffer = await shpInput.dbf.files[0].arrayBuffer();
+    catch (err) {
 
-    // optional projection
-    const prjText = shpInput.prj.files[0]
-      ? await shpInput.prj.files[0].text()
-      : null;
+      console.error(err);
 
-    // CREATE VIRTUAL SHAPEFILE OBJECT
-    const geojson = await shp.combine([
-      shp.parseShp(shpBuffer, shxBuffer),
-      shp.parseDbf(dbfBuffer)
-    ]);
+      alert("Failed to load shapefile");
 
-    // ADD TO MAP (reuse system)
-    addGISLayerFromGeoJSON(
-      geojson,
-      "Shapefile Layer"
-    );
+    }
 
-    alert("Shapefile Loaded Successfully");
+  });
 
-  }
+// RESET ALL SHAPEFILE INPUTS
+document.getElementById(
+  "resetShpBtn"
+).addEventListener("click", () => {
 
-  catch(err){
-    console.error(err);
-    alert("Failed to load shapefile");
-  }
+  Object.values(shpInput)
+    .forEach(input => {
+
+      input.value = "";
+
+      const card =
+        input.closest(".shape-card");
+
+      card.classList.remove(
+        "selected"
+      );
+
+    });
+
+  document.getElementById(
+    "name_shp"
+  ).textContent = "No file selected";
+
+  document.getElementById(
+    "name_shx"
+  ).textContent = "No file selected";
+
+  document.getElementById(
+    "name_dbf"
+  ).textContent = "No file selected";
+
+  document.getElementById(
+    "name_prj"
+  ).textContent = "No file selected";
 
 });
+
+
+
+function setupFileName(
+  inputId,
+  labelId
+) {
+
+  const input =
+    document.getElementById(inputId);
+
+  const label =
+    document.getElementById(labelId);
+
+  const card =
+    input.closest(".shape-card");
+
+  input.addEventListener(
+    "change",
+    () => {
+
+      if (input.files.length) {
+
+        label.textContent =
+          input.files[0].name;
+
+        card.classList.add(
+          "selected"
+        );
+
+      }
+      else {
+
+        label.textContent =
+          "No file selected";
+
+        card.classList.remove(
+          "selected"
+        );
+
+      }
+
+    }
+  );
+
+}
+
+setupFileName(
+  "shp_shp",
+  "name_shp"
+);
+
+setupFileName(
+  "shp_shx",
+  "name_shx"
+);
+
+setupFileName(
+  "shp_dbf",
+  "name_dbf"
+);
+
+setupFileName(
+  "shp_prj",
+  "name_prj"
+);
+
+
+
+function addGISLayerFromGeoJSON(
+  geojson,
+  layerName
+) {
+
+  const layer = L.geoJSON(
+    geojson,
+    {
+
+      style: {
+
+        color: getRandomColor(),
+        weight: 2,
+        fillOpacity: 0.2
+
+      },
+
+      onEachFeature: function (
+        feature,
+        featureLayer
+      ) {
+
+        if (feature.properties) {
+
+          let popupContent = "";
+
+          for (const key in feature.properties) {
+
+            popupContent += `
+              <b>${key}</b>:
+              ${feature.properties[key]}
+              <br>
+            `;
+
+          }
+
+          featureLayer.bindPopup(
+            popupContent
+          );
+
+        }
+
+      }
+
+    }
+  ).addTo(map);
+
+  const layerData = {
+
+    id: Date.now(),
+
+    name: layerName,
+
+    layer
+
+  };
+
+  geojsonLayers.push(layerData);
+
+  createLayerItem(layerData);
+
+  map.fitBounds(
+    layer.getBounds()
+  );
+
+}

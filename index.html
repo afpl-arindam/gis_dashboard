@@ -5,66 +5,56 @@
 
   <meta charset="UTF-8" />
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>GIS Dashboard</title>
 
   <!-- Leaflet -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <!-- Leaflet Draw -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
 
   <!-- CSS -->
-  <link
-    rel="stylesheet"
-    href="css/style.css"
-  />
+  <link rel="stylesheet" href="css/style.css" />
 
 </head>
 
 <body>
 
-    <!-- Navbar -->
-    <header class="navbar">
+  <!-- Navbar -->
+  <header class="navbar">
 
-        <!-- Logo Image -->
-        <div class="nav-left">
-            <img src="assets/logo.png" alt="Logo" class="nav-logo">
-        </div>
+    <!-- Logo Image -->
+    <div class="nav-left">
+      <img src="assets/logo.png" alt="Logo" class="nav-logo">
+    </div>
 
-        <!-- Title -->
-        <div class="nav-center">
-            GIS Analytics Dashboard
-        </div>
+    <!-- Title -->
+    <div class="nav-center">
+      GIS Analytics Dashboard
+    </div>
 
-        <!-- Actions -->
-        <div class="nav-actions">
+    <!-- Actions -->
+    <div class="nav-actions">
 
-            <button id="locateBtn">
-              📍 Current Location
-            </button>
+      <button id="locateBtn">
+        📍 Current Location
+      </button>
 
-            <label class="theme-switch">
+      <button id="exportMapBtn">🖨️ Export Map</button>
 
-                <input type="checkbox" id="themeToggle">
+      <label class="theme-switch">
 
-                <span class="slider"></span>
+        <input type="checkbox" id="themeToggle">
 
-            </label>
+        <span class="slider"></span>
 
-        </div>
+      </label>
 
-    </header>
+    </div>
+
+  </header>
 
   <!-- Main Layout -->
   <main class="layout">
@@ -72,67 +62,115 @@
     <!-- Sidebar -->
     <aside class="sidebar">
 
-      
+
       <!-- GeoJSON Upload -->
       <div class="panel">
 
         <h2>GeoJSON Upload</h2>
 
-        <input
-          type="file"
-          id="geojsonInput"
-          accept=".geojson,.json"
-        />
+        <input type="file" id="geojsonInput" accept=".geojson,.json" />
 
         <div id="layerList" class="layer-list"></div>
-        
+
 
       </div>
-        <!-- <div class="panel">
-        
-            <h2>Shapefile Upload</h2>
+      <div class="panel">
 
-            <input type="file" id="shp_shp" accept=".shp">
-            <label>.SHP (Geometry)</label>
+        <h2>Shapefile Upload</h2>
 
-            <input type="file" id="shp_shx" accept=".shx">
-            <label>.SHX (Index)</label>
 
-            <input type="file" id="shp_dbf" accept=".dbf">
-            <label>.DBF (Attributes)</label>
+        <div class="shape-upload-grid">
 
-            <input type="file" id="shp_prj" accept=".prj">
-            <label>.PRJ (Projection)</label>
+          <label class="shape-card">
 
-            <button id="loadShpBtn">Load Shapefile</button>
+            <span>Geometry</span>
+            <small>.shp</small>
 
-        </div> -->
-
-      <!-- Buffer -->
-        <div class="panel">
-
-            <h2>Buffer Analysis</h2>
-
-            <label>Radius (km)</label>
-
-            <input
-            type="range"
-            id="bufferRadius"
-            min="1"
-            max="50"
-            value="25"
-            />
-
-            <div class="buffer-info">
-                Radius: <span id="radiusValue">25</span> km
+            <div class="file-name" id="name_shp">
+              No file selected
             </div>
 
-            <button id="createBuffer">
-            Create Buffer
-            </button>
+            <input type="file" id="shp_shp" accept=".shp">
+
+          </label>
+
+
+          <label class="shape-card">
+
+            <span>Index</span>
+            <small>.shx</small>
+
+            <div class="file-name" id="name_shx">
+              No file selected
+            </div>
+
+            <input type="file" id="shp_shx" accept=".shx">
+
+          </label>
+
+
+          <label class="shape-card">
+
+            <span>Attributes</span>
+            <small>.dbf</small>
+
+            <div class="file-name" id="name_dbf">
+              No file selected
+            </div>
+
+            <input type="file" id="shp_dbf" accept=".dbf">
+
+          </label>
+
+
+          <label class="shape-card">
+
+            <span>Projection</span>
+            <small>.prj</small>
+
+            <div class="file-name" id="name_prj">
+              No file selected
+            </div>
+
+            <input type="file" id="shp_prj" accept=".prj">
+
+          </label>
+
         </div>
 
-        <div class="panel">
+        <div class="shape-buttons">
+
+          <button id="resetShpBtn">
+            Reset
+          </button>
+
+          <button id="loadShpBtn">
+            Load Shapefile
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- Buffer -->
+      <div class="panel">
+
+        <h2>Buffer Analysis</h2>
+
+        <label>Radius (km)</label>
+
+        <input type="range" id="bufferRadius" min="1" max="50" value="25" />
+
+        <div class="buffer-info">
+          Radius: <span id="radiusValue">25</span> km
+        </div>
+
+        <button id="createBuffer">
+          Create Buffer
+        </button>
+      </div>
+
+      <!-- <div class="panel">
 
         <h2>Analytics</h2>
 
@@ -160,7 +198,7 @@
 
         </div>
 
-      </div>
+      </div> -->
 
     </aside>
 
@@ -169,6 +207,54 @@
     <section id="map"></section>
 
   </main>
+  <footer class="status-bar">
+
+    <div class="status-left">
+
+      <span>
+        🔎 Zoom:
+        <strong id="zoomLevel">--</strong>
+      </span>
+
+      <span>
+        📍 Coordinates:
+        <strong id="coordinates">
+          --
+        </strong>
+      </span>
+
+      <span>
+        🧩 Features:
+        <strong id="geometryCount">
+          0
+        </strong>
+      </span>
+
+      <span>
+        📏 Distance:
+        <strong id="distanceValue">
+          0 km
+        </strong>
+      </span>
+
+    </div>
+
+    <div class="status-right">
+
+      <span>
+        🌍 GIS Dashboard
+      </span>
+
+      <span>
+        ©
+        <a href="mailto:arindam.ojha@afpl.net.in?subject=GIS Dashboard Feedback" class="footer-link">
+          afpl-arindam
+        </a>
+      </span>
+
+    </div>
+
+  </footer>
 
   <!-- Attribute Table Modal -->
 
@@ -186,11 +272,7 @@
 
       </div>
 
-      <input
-        type="text"
-        id="attributeSearch"
-        placeholder="Search attributes..."
-      />
+      <input type="text" id="attributeSearch" placeholder="Search attributes..." />
 
       <div class="attribute-table-wrapper">
 
@@ -213,7 +295,7 @@
 
   <!-- Leaflet Draw -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <!-- Turf.js -->
   <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
 

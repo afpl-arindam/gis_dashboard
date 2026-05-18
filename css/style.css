@@ -108,7 +108,7 @@ button:hover {
 .layout {
 
   display: flex;
-  height: calc(100vh - 70px - 34px);
+  height: calc(100vh - 70px);
 
 }
 
@@ -282,8 +282,14 @@ button:hover {
 #map {
 
   flex: 1;
-  height: 100%;
+  height: auto;
 
+}
+
+.map-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* File Input */
@@ -780,18 +786,18 @@ input[type="range"] {
 
   height: 34px;
 
-  position: fixed;
+  position: relative;
 
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: unset;
+  left: unset;
+  right: unset;
 
-  z-index: 5000;
+  width: 100%;
+
+  z-index: 1000;
 
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
 
   padding: 0 14px;
@@ -800,8 +806,7 @@ input[type="range"] {
 
   backdrop-filter: blur(10px);
 
-  border-top:
-    1px solid #e5e7eb;
+  border-top: 1px solid #e5e7eb;
 
   font-size: 12px;
 
@@ -835,7 +840,7 @@ body.dark .status-bar {
 
 }
 
-.footer-link{
+.footer-link {
 
   color: inherit;
 
@@ -847,7 +852,7 @@ body.dark .status-bar {
 
 }
 
-.footer-link:hover{
+.footer-link:hover {
 
   color: #10b981;
 

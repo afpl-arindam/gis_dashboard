@@ -1,6 +1,6 @@
 // Street Layer
 const streetLayer = L.tileLayer(
-  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  "http://www.google.co.in/maps/vt?lyrs=m@189&gl=in&x={x}&y={y}&z={z}",
   {
     // attribution: "&copy; OpenStreetMap"
     crossOrigin: true

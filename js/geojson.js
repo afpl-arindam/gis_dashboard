@@ -165,6 +165,9 @@ function createLayerItem(layerData) {
     }
   );
 
+  const color = getRandomColor();
+  layerData.color = color;
+
   // ATTRIBUTE TABLE
   item.querySelector(".table-btn")
     .addEventListener("click", () => {
@@ -211,13 +214,26 @@ function createLayerItem(layerData) {
 function getRandomColor() {
 
   const colors = [
-
-    "#2563eb",
-    "#10b981",
-    "#f59e0b",
-    "#ef4444",
-    "#8b5cf6",
-    "#ec4899"
+    "#06b6d4", // cyan
+    "#d946ef", // fuchsia
+    "#84cc16", // lime
+    "#eab308", // yellow
+    "#f97316", // orange
+    "#dc2626", // deep red
+    "#7c3aed", // violet
+    "#14b8a6", // teal
+    "#9333ea", // purple
+    "#0f766e", // dark teal
+    "#1d4ed8", // royal blue
+    "#be123c", // rose
+    "#a16207", // amber brown
+    "#16a34a", // green
+    "#4f46e5", // indigo
+    "#c026d3", // magenta
+    "#ea580c", // burnt orange
+    "#0891b2", // sky blue
+    "#65a30d", // olive green
+    "#b91c1c"  // crimson
 
   ];
 
@@ -453,10 +469,51 @@ document.getElementById("loadShpBtn")
 
       if (
         !shpInput.shp.files[0] ||
-        !shpInput.dbf.files[0]
+        !shpInput.shx.files[0] ||
+        !shpInput.dbf.files[0] ||
+        !shpInput.prj.files[0]
       ) {
 
-        alert("Please select .shp and .dbf files");
+        alert(
+          "Please select:\n\n" +
+          ".shp\n" +
+          ".shx\n" +
+          ".dbf\n" +
+          ".prj"
+        );
+        return;
+
+      }
+
+
+      // VALIDATE SAME FILE NAMES
+      const shpName =
+        shpInput.shp.files[0].name
+          .replace(".shp", "");
+
+      const shxName =
+        shpInput.shx.files[0].name
+          .replace(".shx", "");
+
+      const dbfName =
+        shpInput.dbf.files[0].name
+          .replace(".dbf", "");
+
+      const prjName =
+        shpInput.prj.files[0].name
+          .replace(".prj", "");
+
+
+      if (
+        shpName !== shxName ||
+        shpName !== dbfName ||
+        shpName !== prjName
+      ) {
+
+        alert(
+          "All shapefile components must have the same filename"
+        );
+
         return;
 
       }
@@ -465,14 +522,81 @@ document.getElementById("loadShpBtn")
       const shpBuffer =
         await shpInput.shp.files[0].arrayBuffer();
 
+      const shxBuffer =
+        await shpInput.shx.files[0]
+          .arrayBuffer();
+
       const dbfBuffer =
         await shpInput.dbf.files[0].arrayBuffer();
 
+      const prjText =
+        await shpInput.prj.files[0]
+          .text();
+
+
+      // CRS DETECTION
+      let detectedCRS = "Unknown CRS";
+
+      if (
+        prjText.includes("WGS_1984") ||
+        prjText.includes("WGS 84")
+      ) {
+
+        detectedCRS = "EPSG:4326";
+
+      }
+      else if (
+        prjText.includes("Pseudo-Mercator")
+      ) {
+
+        detectedCRS = "EPSG:3857";
+
+      }
+
+      console.log(
+        "Detected CRS:",
+        detectedCRS
+      );
+
+      console.log(
+        "PRJ CONTENT:",
+        prjText
+      );
+
       // PARSE SHAPEFILE
-      const geojson = await shp.combine([
-        await shp.parseShp(shpBuffer),
-        await shp.parseDbf(dbfBuffer)
-      ]);
+      const geometry =
+        await shp.parseShp(
+          shpBuffer,
+          shxBuffer
+        );
+
+      const attributes =
+        await shp.parseDbf(
+          dbfBuffer
+        );
+
+      const geojson =
+        shp.combine([
+          geometry,
+          attributes
+        ]);
+
+
+      // VALIDATE FEATURES
+      if (
+        !geojson ||
+        !geojson.features ||
+        geojson.features.length === 0
+      ) {
+
+        alert(
+          "Invalid or empty shapefile"
+        );
+
+        return;
+
+      }
+
 
       // ADD TO MAP
       addGISLayerFromGeoJSON(
@@ -480,7 +604,12 @@ document.getElementById("loadShpBtn")
         shpInput.shp.files[0].name
       );
 
-      alert("Shapefile Loaded Successfully");
+      alert(
+        "Shapefile Loaded Successfully\n\n" +
+        `Features: ${geojson.features.length}\n` +
+        `CRS: ${detectedCRS}`
+      );
+
 
       Object.values(shpInput).forEach(input => {
         input.value = "";

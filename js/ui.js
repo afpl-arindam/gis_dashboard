@@ -140,24 +140,24 @@ document.getElementById("exportMapBtn").addEventListener("click", async () => {
 
   mapContainer.appendChild(overlay);
 
-  map.invalidateSize();
+  map.stop();
 
-  await new Promise(resolve => {
+  await new Promise(resolve =>
+    requestAnimationFrame(() =>
+      requestAnimationFrame(resolve)
+    )
+  );
 
-    logo.onload = () => {
-
-      setTimeout(resolve, 1500);
-
-    };
-
-  });
+  if (!logo.complete) {
+    await logo.decode();
+  }
 
   html2canvas(mapContainer, {
     useCORS: true,
     allowTaint: true,
     backgroundColor: null,
     logging: false,
-    scale: 3
+    scale: 4
   })
     .then(canvas => {
 

@@ -30,6 +30,7 @@ document.getElementById(
       const layer = L.geoJSON(
         geojson,
         {
+          renderer: L.canvas(),
 
           style: {
 
@@ -623,6 +624,8 @@ function addGISLayerFromGeoJSON(
   const layer = L.geoJSON(
     geojson,
     {
+
+      renderer: L.canvas(),
 
       style: {
 

@@ -68,6 +68,18 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
 });
 
+// Draw Edited
+map.on(L.Draw.Event.EDITED, function (event) {
+
+  const layers = event.layers;
+
+  layers.eachLayer(function (layer) {
+
+    analyzeGeometry(layer);
+
+  });
+});
+
 // Draw Deleted
 map.on(L.Draw.Event.DELETED, function () {
 
@@ -78,6 +90,7 @@ map.on(L.Draw.Event.DELETED, function () {
   ).textContent = geometryCount;
 
 });
+
 
 // Geometry Analysis
 function analyzeGeometry(layer) {
@@ -187,45 +200,6 @@ document.getElementById(
 
 });
 
-// Buffer Tool
-// document.getElementById(
-//   "bufferBtn"
-// ).addEventListener("click", () => {
-
-//   alert(
-//     "Click anywhere on map to create 25km spatial analysis zone"
-//   );
-
-//   map.once("click", (e) => {
-
-//     if(bufferCircle) {
-
-//       map.removeLayer(bufferCircle);
-
-//     }
-
-//     bufferCircle = L.circle(
-//       e.latlng,
-//       {
-
-//         radius: CONFIG.BUFFER_RADIUS,
-
-//         color: "#7c3aed",
-
-//         fillColor: "#8b5cf6",
-
-//         fillOpacity: 0.2
-
-//       }
-//     ).addTo(map);
-
-//     map.fitBounds(
-//       bufferCircle.getBounds()
-//     );
-
-//   });
-
-// });
 
 
 // GIS BUFFER TOOL

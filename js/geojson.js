@@ -42,30 +42,46 @@ document.getElementById(
 
           },
 
-          onEachFeature:
-            function (feature, featureLayer) {
+          onEachFeature: function (feature, layer) {
 
-              if (feature.properties) {
+            const originalStyle = {
+              color: layer.options.color,
+              weight: layer.options.weight,
+              fillOpacity: layer.options.fillOpacity
+            };
 
-                let popupContent = "";
+            if (feature.properties) {
 
-                for (const key in feature.properties) {
+              let popupContent = "";
 
-                  popupContent += `
-                  <b>${key}</b>:
-                  ${feature.properties[key]}
-                  <br>
-                `;
-
-                }
-
-                featureLayer.bindPopup(
-                  popupContent
-                );
-
+              for (const key in feature.properties) {
+                popupContent += `<b>${key}</b>: ${feature.properties[key]}<br>`;
               }
 
+              layer.bindPopup(popupContent);
             }
+
+            layer.on("mouseover", () => {
+
+              if (layer.setStyle) {
+                layer.setStyle({
+                  color: "#f59e0b",
+                  weight: 4,
+                  fillOpacity: originalStyle.fillOpacity
+                });
+              }
+
+            });
+
+            layer.on("mouseout", () => {
+
+              if (layer.setStyle) {
+                layer.setStyle(originalStyle);
+              }
+
+            });
+
+          }
 
         }
       ).addTo(map);
@@ -217,7 +233,6 @@ function getRandomColor() {
     "#06b6d4", // cyan
     "#d946ef", // fuchsia
     "#84cc16", // lime
-    "#eab308", // yellow
     "#f97316", // orange
     "#dc2626", // deep red
     "#7c3aed", // violet
@@ -764,30 +779,44 @@ function addGISLayerFromGeoJSON(
 
       },
 
-      onEachFeature: function (
-        feature,
-        featureLayer
-      ) {
+      onEachFeature: function (feature, layer) {
+
+        const originalStyle = {
+          color: layer.options.color,
+          weight: layer.options.weight,
+          fillOpacity: layer.options.fillOpacity
+        };
 
         if (feature.properties) {
 
           let popupContent = "";
 
           for (const key in feature.properties) {
-
-            popupContent += `
-              <b>${key}</b>:
-              ${feature.properties[key]}
-              <br>
-            `;
-
+            popupContent += `<b>${key}</b>: ${feature.properties[key]}<br>`;
           }
 
-          featureLayer.bindPopup(
-            popupContent
-          );
-
+          layer.bindPopup(popupContent);
         }
+
+        layer.on("mouseover", () => {
+
+          if (layer.setStyle) {
+            layer.setStyle({
+              color: "#f59e0b",
+              weight: 4,
+              fillOpacity: originalStyle.fillOpacity
+            });
+          }
+
+        });
+
+        layer.on("mouseout", () => {
+
+          if (layer.setStyle) {
+            layer.setStyle(originalStyle);
+          }
+
+        });
 
       }
 

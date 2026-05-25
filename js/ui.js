@@ -41,7 +41,7 @@ document.getElementById("exportMapBtn").addEventListener("click", async () => {
   const overlay = document.createElement("div");
   overlay.style.position = "absolute";
   overlay.style.inset = "0";
-  overlay.style.zIndex = "9999";
+  overlay.style.zIndex = "800";
   overlay.style.pointerEvents = "none";
 
   // TITLE (top center)
@@ -166,7 +166,10 @@ document.getElementById("exportMapBtn").addEventListener("click", async () => {
 
       if (dataURL === "data:,") {
 
-        alert("Export failed");
+        showToast(
+          "Export failed",
+          "error"
+        );
 
         overlay.remove();
 

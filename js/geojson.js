@@ -107,8 +107,9 @@ document.getElementById(
 
       }
 
-      alert(
-        "GeoJSON Loaded Successfully"
+      showToast(
+        "GeoJSON Loaded Successfully",
+        "success"
       );
       event.target.value = "";
 
@@ -116,8 +117,10 @@ document.getElementById(
     catch (error) {
 
       console.error(error);
-
-      alert("Invalid GeoJSON File");
+      showToast(
+        "Invalid GeoJSON File",
+        "error"
+      );
 
     }
 
@@ -489,12 +492,9 @@ document.getElementById("loadShpBtn")
         !shpInput.prj.files[0]
       ) {
 
-        alert(
-          "Please select:\n\n" +
-          ".shp\n" +
-          ".shx\n" +
-          ".dbf\n" +
-          ".prj"
+        showToast(
+          "Select .shp .shx .dbf .prj files",
+          "warning"
         );
         return;
 
@@ -525,8 +525,9 @@ document.getElementById("loadShpBtn")
         shpName !== prjName
       ) {
 
-        alert(
-          "All shapefile components must have the same filename"
+        showToast(
+          "Shapefile filenames must match",
+          "error"
         );
 
         return;
@@ -604,8 +605,9 @@ document.getElementById("loadShpBtn")
         geojson.features.length === 0
       ) {
 
-        alert(
-          "Invalid or empty shapefile"
+        showToast(
+          "Invalid or empty shapefile",
+          "error"
         );
 
         return;
@@ -619,10 +621,9 @@ document.getElementById("loadShpBtn")
         shpInput.shp.files[0].name
       );
 
-      alert(
-        "Shapefile Loaded Successfully\n\n" +
-        `Features: ${geojson.features.length}\n` +
-        `CRS: ${detectedCRS}`
+      showToast(
+        `Loaded ${geojson.features.length} features (${detectedCRS})`,
+        "success"
       );
 
 
@@ -649,7 +650,10 @@ document.getElementById("loadShpBtn")
 
       console.error(err);
 
-      alert("Failed to load shapefile");
+      showToast(
+        "Failed to load shapefile",
+        "error"
+      );
 
     }
 

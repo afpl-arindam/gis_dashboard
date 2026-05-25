@@ -107,8 +107,9 @@ function analyzeGeometry(layer) {
         Math.pow(layer.getRadius(), 2)
       ) / 1000000;
 
-    alert(
-      `Circle Radius: ${radius} km\nArea: ${area.toFixed(2)} km²`
+    showToast(
+      `Radius: ${radius} km | Area: ${area.toFixed(2)} km²`,
+      "info"
     );
 
   }
@@ -145,8 +146,9 @@ function analyzeGeometry(layer) {
     const area =
       turf.area(geojson);
 
-    alert(
-      `Polygon Area: ${(area / 1000000).toFixed(2)} km²`
+    showToast(
+      `Polygon Area: ${(area / 1000000).toFixed(2)} km²`,
+      "success"
     );
 
   }
@@ -160,7 +162,10 @@ document.getElementById(
 
   if (!navigator.geolocation) {
 
-    alert("Geolocation not supported");
+    showToast(
+      "Geolocation not supported",
+      "error"
+    );
 
     return;
   }
@@ -192,7 +197,10 @@ document.getElementById(
 
     () => {
 
-      alert("Unable to fetch location");
+      showToast(
+        "Unable to fetch location",
+        "error"
+      );
 
     }
 
@@ -251,8 +259,9 @@ createBufferBtn.addEventListener(
 
     bufferMode = true;
 
-    alert(
-      "Buffer Tool Active\nClick anywhere on map"
+    showToast(
+      "Buffer mode active — click map",
+      "info"
     );
 
   }
@@ -296,3 +305,33 @@ map.on("click", (e) => {
   analyzeGeometry(bufferLayer);
 
 });
+
+
+//Toast
+function showToast(message, type = "info") {
+
+  const container =
+    document.getElementById("toastContainer");
+
+  const toast =
+    document.createElement("div");
+
+  toast.className =
+    `toast ${type}`;
+
+  toast.innerHTML = message;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(100%)";
+
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+
+  }, 3000);
+
+}

@@ -70,6 +70,34 @@ document.getElementById("exportMapBtn").addEventListener("click", async () => {
   logo.style.left = "20px";
   logo.style.height = "60px";
 
+
+  // NORTH ARROW (top-right)
+  const north = document.createElement("div");
+
+  north.innerHTML = "⬆ N";
+
+  north.style.position = "absolute";
+  north.style.top = "30px";
+  north.style.right = "85px";
+  north.style.fontSize = "18px";
+  north.style.fontWeight = "bold";
+  north.style.textAlign = "center";
+  north.style.width = "40px";
+  north.style.height = "40px";
+  north.style.display = "flex";
+  north.style.alignItems = "center";
+  north.style.justifyContent = "center";
+
+  north.style.borderRadius = "50%";
+  north.style.border = isDark
+    ? "2px solid #f3f4f6"
+    : "2px solid #111827";
+
+  north.style.color = isDark ? "#f3f4f6" : "#111827";
+  north.style.background = isDark
+    ? "rgba(15,23,42,0.6)"
+    : "rgba(255,255,255,0.7)";
+
   // DATE TIME (bottom-left)
   const date = document.createElement("div");
   const now = new Date();
@@ -94,8 +122,8 @@ document.getElementById("exportMapBtn").addEventListener("click", async () => {
   const legend = document.createElement("div");
 
   legend.style.position = "absolute";
-  legend.style.bottom = "50px";
-  legend.style.right = "10px";
+  legend.style.bottom = "20px";
+  legend.style.right = "65px";
   legend.style.background = isDark
     ? "rgba(15,23,42,0.85)"
     : "rgba(255,255,255,0.85)";
@@ -135,6 +163,7 @@ document.getElementById("exportMapBtn").addEventListener("click", async () => {
 
   overlay.appendChild(title);
   overlay.appendChild(logo);
+  overlay.appendChild(north);
   overlay.appendChild(date);
   overlay.appendChild(legend);
 
@@ -160,35 +189,34 @@ document.getElementById("exportMapBtn").addEventListener("click", async () => {
     scale: 4
   })
     .then(canvas => {
+      const cropRight = 240;
 
-      const dataURL =
-        canvas.toDataURL("image/png");
+      const croppedCanvas = document.createElement("canvas");
+      const ctx = croppedCanvas.getContext("2d");
+
+      croppedCanvas.width = canvas.width - cropRight;
+      croppedCanvas.height = canvas.height;
+
+      ctx.drawImage(
+        canvas,
+        0, 0, canvas.width - cropRight, canvas.height,
+        0, 0, canvas.width - cropRight, canvas.height
+      );
+
+      const dataURL = croppedCanvas.toDataURL("image/png");
 
       if (dataURL === "data:,") {
-
-        showToast(
-          "Export failed",
-          "error"
-        );
-
+        showToast("Export failed", "error");
         overlay.remove();
-
         return;
-
       }
 
-      const link =
-        document.createElement("a");
-
-      link.download =
-        "map_export.png";
-
+      const link = document.createElement("a");
+      link.download = "map_export.png";
       link.href = dataURL;
-
       link.click();
 
       overlay.remove();
-
     });
 });
 

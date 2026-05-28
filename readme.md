@@ -52,6 +52,7 @@ A modern web-based GIS (Geographic Information System) dashboard built using **L
   - Title
   - Logo
   - Legend
+  - North Arrow
   - Timestamp
 - html2canvas-based rendering
 
